@@ -1,0 +1,32 @@
+@if (visible) {
+  <div class="modal-backdrop-custom" role="presentation" (click)="cancel.emit()"></div>
+
+  <section
+    class="confirm-modal"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="confirm-delete-title"
+  >
+    <div class="modal-icon">
+      <i class="bi bi-eye-slash"></i>
+    </div>
+
+    <h2 id="confirm-delete-title">Desactivar producto</h2>
+    <p>
+      Esta accion no borra el registro de la base de datos. Solo marcara
+      <strong>{{ itemName }}</strong> como inactivo.
+    </p>
+
+    <div class="modal-actions">
+      <button type="button" class="app-button ghost" [disabled]="loading" (click)="cancel.emit()">
+        Cancelar
+      </button>
+      <button type="button" class="app-button danger" [disabled]="loading" (click)="confirm.emit()">
+        @if (loading) {
+          <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+        }
+        Desactivar
+      </button>
+    </div>
+  </section>
+}

@@ -1,0 +1,66 @@
+<section class="mobile-page detail-page">
+  @if (loading) {
+    <div class="state-card app-card">
+      <div class="spinner-border" role="status" aria-label="Cargando producto"></div>
+      <p>Cargando detalle...</p>
+    </div>
+  } @else if (errorMessage) {
+    <div class="alert app-alert-error" role="alert">
+      <i class="bi bi-exclamation-triangle"></i>
+      <span>{{ errorMessage }}</span>
+    </div>
+
+    <a class="app-button secondary" routerLink="/catalogo">
+      <i class="bi bi-arrow-left"></i>
+      Volver al catalogo
+    </a>
+  } @else if (producto) {
+    <article class="detail-card app-card">
+      <div class="detail-media">
+        @if (imagenDisponible) {
+          <img [src]="imagenSrc" [alt]="producto.nombre" (error)="imageError = true" />
+        } @else {
+          <div class="image-fallback">
+            <i class="bi bi-camera"></i>
+          </div>
+        }
+      </div>
+
+      <div class="detail-content">
+        <span class="category-badge">{{ producto.categoria?.nombre || 'Sin categoria' }}</span>
+        <h1>{{ producto.nombre }}</h1>
+        <p>{{ producto.descripcion }}</p>
+
+        <div class="info-grid">
+          <div>
+            <span>Precio</span>
+            <strong>{{ producto.precio | currency: 'MXN' : 'symbol' : '1.0-2' }}</strong>
+          </div>
+          <div>
+            <span>Stock</span>
+            <strong>{{ producto.stock }}</strong>
+          </div>
+          <div>
+            <span>Estado</span>
+            <strong>{{ producto.activo ? 'Activo' : 'Inactivo' }}</strong>
+          </div>
+        </div>
+
+        <div class="detail-actions">
+          <a
+            class="app-button primary"
+            routerLink="/pedido"
+            [queryParams]="{ producto_id: producto.id }"
+          >
+            <i class="bi bi-bag-check"></i>
+            Pedir este producto
+          </a>
+          <a class="app-button ghost" routerLink="/catalogo">
+            <i class="bi bi-arrow-left"></i>
+            Volver
+          </a>
+        </div>
+      </div>
+    </article>
+  }
+</section>

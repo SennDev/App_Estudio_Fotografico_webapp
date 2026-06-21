@@ -1,0 +1,82 @@
+<section class="mobile-page">
+  <div class="screen-heading">
+    <span class="app-section-kicker">Catalogo conectado a FastAPI</span>
+    <h1 class="app-section-title">Productos y servicios</h1>
+    <p class="app-muted">
+      Consulta sesiones, impresiones, albumes y servicios digitales guardados en la base de datos.
+    </p>
+  </div>
+
+  <div class="app-card filter-card">
+    <label for="categoria">Filtrar por categoria</label>
+    <select
+      id="categoria"
+      class="form-select app-control"
+      [(ngModel)]="categoriaSeleccionada"
+      (change)="filtrarPorCategoria()"
+    >
+      <option [ngValue]="0">Todas las categorias</option>
+      @for (categoria of categorias; track categoria.id) {
+        <option [ngValue]="categoria.id">{{ categoria.nombre }}</option>
+      }
+    </select>
+  </div>
+
+  @if (loading) {
+    <div class="state-card app-card">
+      <div class="spinner-border" role="status" aria-label="Cargando catalogo"></div>
+      <p>Cargando productos...</p>
+    </div>
+  } @else if (errorMessage) {
+    <div class="alert app-alert-error" role="alert">
+      <i class="bi bi-wifi-off"></i>
+      <span>{{ errorMessage }}</span>
+    </div>
+  } @else if (productos.length === 0) {
+    <div class="state-card app-card">
+      <i class="bi bi-camera"></i>
+      <h2>No hay productos para mostrar</h2>
+      <p>Prueba con otra categoria o revisa los datos iniciales del backend.</p>
+    </div>
+  } @else {
+    <div class="product-grid">
+      @for (producto of productos; track trackProducto($index, producto)) {
+        <article class="app-card product-card">
+          <div class="product-media">
+            @if (imagenDisponible(producto)) {
+              <img
+                [src]="imagenSrc(producto)"
+                [alt]="producto.nombre"
+                loading="lazy"
+                (error)="marcarImagenError(producto.id)"
+              />
+            } @else {
+              <div class="image-fallback">
+                <i class="bi bi-camera"></i>
+              </div>
+            }
+          </div>
+
+          <div class="product-content">
+            <div class="product-topline">
+              <span class="category-badge">{{ producto.categoria?.nombre || 'Sin categoria' }}</span>
+              <span class="stock-badge" [class.low]="producto.stock <= 5">
+                {{ producto.stock }} disp.
+              </span>
+            </div>
+
+            <h2>{{ producto.nombre }}</h2>
+            <p>{{ producto.descripcion }}</p>
+
+            <div class="product-footer">
+              <strong>{{ producto.precio | currency: 'MXN' : 'symbol' : '1.0-2' }}</strong>
+              <a class="app-button compact" [routerLink]="['/producto', producto.id]">
+                Ver detalle
+              </a>
+            </div>
+          </div>
+        </article>
+      }
+    </div>
+  }
+</section>

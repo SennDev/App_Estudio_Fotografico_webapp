@@ -1,0 +1,16 @@
+.app-footer {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .app-footer {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    width: min(100%, 1120px);
+    margin: 0 auto;
+    padding: 0 1.5rem 2rem;
+    color: var(--app-muted-text);
+    font-size: 0.9rem;
+  }
+}

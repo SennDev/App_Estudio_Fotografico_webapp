@@ -1,0 +1,118 @@
+.detail-card {
+  overflow: hidden;
+  padding: 0;
+  background: var(--app-glass);
+  backdrop-filter: blur(12px);
+}
+
+.detail-media {
+  aspect-ratio: 4 / 3;
+  background:
+    radial-gradient(circle at 75% 20%, color-mix(in srgb, var(--app-secondary) 24%, transparent), transparent 11rem),
+    color-mix(in srgb, var(--app-primary) 12%, var(--app-surface));
+}
+
+.detail-media img,
+.image-fallback {
+  width: 100%;
+  height: 100%;
+}
+
+.detail-media img {
+  display: block;
+  object-fit: cover;
+}
+
+.image-fallback {
+  display: grid;
+  place-items: center;
+  color: var(--app-primary);
+  font-size: 3rem;
+  background:
+    radial-gradient(circle at 30% 24%, color-mix(in srgb, var(--app-secondary) 24%, transparent), transparent 10rem),
+    linear-gradient(145deg, var(--app-surface), var(--app-elevated));
+  box-shadow: inset 0 1px 0 var(--app-highlight);
+}
+
+.detail-content {
+  display: grid;
+  gap: 1rem;
+  padding: 1.15rem;
+}
+
+.category-badge {
+  width: fit-content;
+  padding: 0.45rem 0.75rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--app-accent) 14%, transparent);
+  color: var(--app-accent);
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+
+h1 {
+  margin: 0;
+  font-size: clamp(1.8rem, 8vw, 3rem);
+  line-height: 1;
+}
+
+p {
+  margin: 0;
+  color: var(--app-muted-text);
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.65rem;
+}
+
+.info-grid div {
+  padding: 0.85rem;
+  border: 1px solid var(--app-border);
+  border-radius: 1rem;
+  background: color-mix(in srgb, var(--app-surface) 86%, transparent);
+  box-shadow: inset 0 1px 0 var(--app-highlight);
+}
+
+.info-grid span,
+.info-grid strong {
+  display: block;
+}
+
+.info-grid span {
+  color: var(--app-muted-text);
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+
+.info-grid strong {
+  margin-top: 0.25rem;
+  font-size: 1rem;
+}
+
+.detail-actions {
+  display: grid;
+  gap: 0.7rem;
+}
+
+@media (min-width: 768px) {
+  .detail-card {
+    display: grid;
+    grid-template-columns: 0.95fr 1.05fr;
+  }
+
+  .detail-media {
+    min-height: 520px;
+    aspect-ratio: auto;
+  }
+
+  .detail-content {
+    align-content: center;
+    padding: 2rem;
+  }
+
+  .detail-actions {
+    display: flex;
+  }
+}

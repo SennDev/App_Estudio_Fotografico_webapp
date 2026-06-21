@@ -1,59 +1,109 @@
-# AppEstudioFotograficoWebapp
+# Lumiere Studios - Frontend Angular
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.3.14.
+Frontend mobile-first para el proyecto escolar `App_Estudio_Fotografico`. La aplicacion permite consultar productos y servicios de un estudio fotografico, crear pedidos y administrar productos mediante operaciones CRUD conectadas a una API FastAPI.
 
-## Development server
+## Tecnologias
 
-To start a local development server, run:
+- Angular 20 con componentes standalone.
+- Reactive Forms.
+- HttpClient.
+- Bootstrap 5.
+- Bootstrap Icons.
+- SCSS con tema claro/oscuro automatico.
+
+## Backend requerido
+
+El frontend consume la API en:
+
+```ts
+http://localhost:8000/api
+```
+
+La URL se configura en:
+
+```text
+src/app/core/api.config.ts
+```
+
+Antes de usar el catalogo, pedidos o administracion, ejecuta el backend FastAPI por separado desde:
+
+```text
+C:\Users\Gerso\OneDrive\Documentos\App_Estudio_Fotografico\App_Estudio_Fotografico_api
+```
+
+Comando esperado del backend:
+
+```bash
+uvicorn app.main:app --reload
+```
+
+Swagger del backend:
+
+```text
+http://localhost:8000/docs
+```
+
+## Ejecutar Angular
+
+Desde esta carpeta:
+
+```bash
+npm start
+```
+
+O directamente:
 
 ```bash
 ng serve
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+Abrir en el navegador:
 
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
+```text
+http://localhost:4200
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
+## Compilar
 
 ```bash
 ng build
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+## Pantallas principales
 
-## Running unit tests
+- `/home`: presentacion de Lumiere Studios.
+- `/catalogo`: consulta de productos desde FastAPI.
+- `/producto/:id`: detalle de producto.
+- `/pedido`: formulario para crear pedidos.
+- `/admin/productos`: administracion y baja logica de productos.
+- `/admin/productos/nuevo`: alta de producto.
+- `/admin/productos/editar/:id`: edicion de producto.
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+## Conexion con FastAPI
 
-```bash
-ng test
+Los servicios en `src/app/services` usan `HttpClient` y consumen:
+
+- `GET /api/productos`
+- `GET /api/categorias`
+- `POST /api/pedidos`
+- `POST /api/productos`
+- `PUT /api/productos/{id}`
+- `DELETE /api/productos/{id}`
+
+La eliminacion de productos es logica: el backend marca el producto como inactivo.
+
+## Nota para Cordova y Android
+
+En desarrollo web se usa:
+
+```text
+http://localhost:8000/api
 ```
 
-## Running end-to-end tests
+Cuando la app se empaquete con Cordova y se pruebe en el emulador de Android Studio, puede ser necesario cambiar la URL a:
 
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
+```text
+http://10.0.2.2:8000/api
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+En un dispositivo fisico se debe usar la IP local de la computadora donde corre FastAPI.

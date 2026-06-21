@@ -1,0 +1,182 @@
+<section class="mobile-page order-page">
+  <div class="screen-heading">
+    <span class="app-section-kicker">Formulario conectado</span>
+    <h1 class="app-section-title">Crear pedido</h1>
+    <p class="app-muted">
+      Captura los datos del cliente y selecciona un producto. El backend calcula el total final.
+    </p>
+  </div>
+
+  @if (successMessage) {
+    <div class="alert app-alert-success" role="status">
+      <i class="bi bi-check-circle"></i>
+      <span>{{ successMessage }}</span>
+    </div>
+  }
+
+  @if (errorMessage) {
+    <div class="alert app-alert-error" role="alert">
+      <i class="bi bi-exclamation-triangle"></i>
+      <span>{{ errorMessage }}</span>
+    </div>
+  }
+
+  <form class="app-card app-card-glass order-form" [formGroup]="form" (ngSubmit)="enviarPedido()">
+    <div class="form-grid">
+      <div class="app-field field">
+        <label for="nombre_cliente">Nombre del cliente</label>
+        <input
+          id="nombre_cliente"
+          type="text"
+          class="form-control app-control"
+          [class.is-invalid]="isInvalid('nombre_cliente')"
+          [attr.aria-invalid]="isInvalid('nombre_cliente')"
+          autocomplete="name"
+          formControlName="nombre_cliente"
+          placeholder="Ej. Ana Sofia Nunez"
+        />
+        @if (isInvalid('nombre_cliente')) {
+          <small>{{ getErrorMessage('nombre_cliente') }}</small>
+        }
+      </div>
+
+      <div class="app-field field">
+        <label for="telefono_cliente">Telefono</label>
+        <input
+          id="telefono_cliente"
+          type="tel"
+          class="form-control app-control"
+          [class.is-invalid]="isInvalid('telefono_cliente')"
+          [attr.aria-invalid]="isInvalid('telefono_cliente')"
+          autocomplete="tel-national"
+          inputmode="tel"
+          formControlName="telefono_cliente"
+          placeholder="Ej. 228 123 4567"
+        />
+        @if (isInvalid('telefono_cliente')) {
+          <small>{{ getErrorMessage('telefono_cliente') }}</small>
+        }
+      </div>
+
+      <div class="app-field field">
+        <label for="correo_cliente">Correo electronico</label>
+        <input
+          id="correo_cliente"
+          type="email"
+          class="form-control app-control"
+          [class.is-invalid]="isInvalid('correo_cliente')"
+          [attr.aria-invalid]="isInvalid('correo_cliente')"
+          autocomplete="email"
+          formControlName="correo_cliente"
+          placeholder="cliente@correo.com"
+        />
+        @if (isInvalid('correo_cliente')) {
+          <small>{{ getErrorMessage('correo_cliente') }}</small>
+        }
+      </div>
+
+      <div class="app-field field">
+        <label for="producto_id">Producto o servicio</label>
+        <select
+          id="producto_id"
+          class="form-select app-control"
+          [class.is-invalid]="isInvalid('producto_id')"
+          [attr.aria-invalid]="isInvalid('producto_id')"
+          formControlName="producto_id"
+        >
+          <option [ngValue]="0">
+            {{ loadingProductos ? 'Cargando productos...' : 'Selecciona un producto' }}
+          </option>
+          @for (producto of productos; track producto.id) {
+            <option [ngValue]="producto.id">
+              {{ producto.nombre }} - {{ producto.precio | currency: 'MXN' : 'symbol' : '1.0-2' }}
+            </option>
+          }
+        </select>
+        @if (isInvalid('producto_id')) {
+          <small>{{ getErrorMessage('producto_id') }}</small>
+        }
+      </div>
+
+      <div class="app-field field">
+        <label for="cantidad">Cantidad</label>
+        <input
+          id="cantidad"
+          type="number"
+          min="1"
+          step="1"
+          class="form-control app-control"
+          [class.is-invalid]="isInvalid('cantidad')"
+          [attr.aria-invalid]="isInvalid('cantidad')"
+          inputmode="numeric"
+          formControlName="cantidad"
+        />
+        @if (isInvalid('cantidad')) {
+          <small>{{ getErrorMessage('cantidad') }}</small>
+        }
+      </div>
+
+      <div class="app-field field">
+        <label for="fecha_evento">Fecha del evento</label>
+        <input
+          id="fecha_evento"
+          type="date"
+          class="form-control app-control"
+          [class.is-invalid]="isInvalid('fecha_evento')"
+          [attr.aria-invalid]="isInvalid('fecha_evento')"
+          [attr.min]="minEventDate"
+          [attr.max]="maxEventDate"
+          formControlName="fecha_evento"
+        />
+        @if (isInvalid('fecha_evento')) {
+          <small>{{ getErrorMessage('fecha_evento') }}</small>
+        }
+      </div>
+
+      <div class="app-field field field-full">
+        <label for="observaciones">Observaciones</label>
+        <textarea
+          id="observaciones"
+          rows="4"
+          class="form-control app-control"
+          [class.is-invalid]="isInvalid('observaciones')"
+          [attr.aria-invalid]="isInvalid('observaciones')"
+          formControlName="observaciones"
+          placeholder="Detalles importantes del pedido"
+        ></textarea>
+        @if (isInvalid('observaciones')) {
+          <small>{{ getErrorMessage('observaciones') }}</small>
+        }
+      </div>
+    </div>
+
+    <aside class="total-panel liquid-surface">
+      <div>
+        <span>Total estimado</span>
+        <strong>{{ totalEstimado | currency: 'MXN' : 'symbol' : '1.0-2' }}</strong>
+      </div>
+      <p>
+        Este monto se muestra como referencia. El backend vuelve a calcularlo al guardar el pedido.
+      </p>
+      @if (productoSeleccionado) {
+        <div class="selected-product">
+          <i class="bi bi-box-seam"></i>
+          <span>{{ productoSeleccionado.nombre }} · {{ productoSeleccionado.stock }} disponibles</span>
+        </div>
+      }
+    </aside>
+
+    <button
+      type="submit"
+      class="app-button primary submit-button pressable"
+      [disabled]="form.invalid || sending || loadingProductos"
+    >
+      @if (sending) {
+        <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+      } @else {
+        <i class="bi bi-send"></i>
+      }
+      Enviar pedido
+    </button>
+  </form>
+</section>

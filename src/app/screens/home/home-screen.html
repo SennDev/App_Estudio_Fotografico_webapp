@@ -1,0 +1,65 @@
+<section class="mobile-page home-page">
+  <div class="hero">
+    <div class="hero-copy">
+      <span class="eyebrow">
+        <i class="bi bi-aperture"></i>
+        Mobile web app
+      </span>
+
+      <h1>Lumiere Studios</h1>
+      <p>
+        Productos fotograficos, sesiones de estudio, impresiones y servicios digitales en una
+        experiencia pensada para celular.
+      </p>
+
+      <div class="hero-actions">
+        <a class="app-button primary" routerLink="/catalogo">
+          <i class="bi bi-grid"></i>
+          Ver catalogo
+        </a>
+        <a class="app-button secondary" routerLink="/pedido">
+          <i class="bi bi-bag-check"></i>
+          Crear pedido
+        </a>
+      </div>
+    </div>
+
+    <div class="hero-device" aria-label="Vista previa de Lumiere Studios">
+      <div class="lens-card">
+        <i class="bi bi-camera-fill"></i>
+      </div>
+      <div class="mini-shot shot-one"></div>
+      <div class="mini-shot shot-two"></div>
+      <div class="mini-shot shot-three"></div>
+    </div>
+  </div>
+
+  <section class="highlight-grid" aria-label="Servicios destacados">
+    @for (item of highlights; track item.title) {
+      <article class="app-card highlight-card">
+        <span class="highlight-icon">
+          <i class="bi" [class]="item.icon"></i>
+        </span>
+        <h2>{{ item.title }}</h2>
+        <p>{{ item.text }}</p>
+      </article>
+    }
+  </section>
+
+  <section class="app-card about-card">
+    <div>
+      <span class="app-section-kicker">Proyecto escolar</span>
+      <h2 class="app-section-title">Venta de productos y servicios fotograficos</h2>
+      <p class="app-muted">
+        Esta interfaz consume una API FastAPI con MariaDB/MySQL para consultar productos, crear
+        pedidos y administrar el catalogo con operaciones CRUD basicas.
+      </p>
+    </div>
+
+    <div class="rubric-pills" aria-label="Elementos de la rubrica">
+      <span><i class="bi bi-phone"></i> Mobile first</span>
+      <span><i class="bi bi-database"></i> Base de datos</span>
+      <span><i class="bi bi-pencil-square"></i> CRUD</span>
+    </div>
+  </section>
+</section>

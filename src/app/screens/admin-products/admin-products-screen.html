@@ -1,0 +1,93 @@
+<section class="mobile-page admin-page">
+  <div class="admin-header">
+    <div>
+      <span class="app-section-kicker">CRUD de productos</span>
+      <h1 class="app-section-title">Administracion</h1>
+      <p class="app-muted">
+        Consulta, crea, edita y desactiva productos. La eliminacion es logica: el registro queda en
+        la base de datos.
+      </p>
+    </div>
+
+    <a class="app-button primary" routerLink="/admin/productos/nuevo">
+      <i class="bi bi-plus-lg"></i>
+      Nuevo
+    </a>
+  </div>
+
+  @if (successMessage) {
+    <div class="alert app-alert-success" role="status">
+      <i class="bi bi-check-circle"></i>
+      <span>{{ successMessage }}</span>
+    </div>
+  }
+
+  @if (errorMessage) {
+    <div class="alert app-alert-error" role="alert">
+      <i class="bi bi-exclamation-triangle"></i>
+      <span>{{ errorMessage }}</span>
+    </div>
+  }
+
+  @if (loading) {
+    <div class="state-card app-card">
+      <div class="spinner-border" role="status" aria-label="Cargando productos"></div>
+      <p>Cargando administracion...</p>
+    </div>
+  } @else if (productos.length === 0) {
+    <div class="state-card app-card">
+      <i class="bi bi-box"></i>
+      <h2>No hay productos registrados</h2>
+      <p>Crea el primer producto del catalogo.</p>
+    </div>
+  } @else {
+    <div class="admin-list">
+      @for (producto of productos; track producto.id) {
+        <article class="app-card admin-product-card" [class.inactive]="!producto.activo">
+          <div class="product-main">
+            <span class="status-badge" [class.off]="!producto.activo">
+              {{ producto.activo ? 'Activo' : 'Inactivo' }}
+            </span>
+            <h2>{{ producto.nombre }}</h2>
+            <p>{{ producto.categoria?.nombre || 'Sin categoria' }}</p>
+          </div>
+
+          <div class="product-metrics">
+            <div>
+              <span>Precio</span>
+              <strong>{{ producto.precio | currency: 'MXN' : 'symbol' : '1.0-2' }}</strong>
+            </div>
+            <div>
+              <span>Stock</span>
+              <strong>{{ producto.stock }}</strong>
+            </div>
+          </div>
+
+          <div class="admin-actions">
+            <a class="app-button compact secondary" [routerLink]="['/admin/productos/editar', producto.id]">
+              <i class="bi bi-pencil"></i>
+              Editar
+            </a>
+            <button
+              type="button"
+              class="app-button compact danger"
+              [disabled]="!producto.activo"
+              (click)="abrirConfirmacion(producto)"
+            >
+              <i class="bi bi-eye-slash"></i>
+              Desactivar
+            </button>
+          </div>
+        </article>
+      }
+    </div>
+  }
+
+  <app-confirm-delete-modal
+    [visible]="!!productoSeleccionado"
+    [itemName]="productoSeleccionado?.nombre || ''"
+    [loading]="deleting"
+    (cancel)="cerrarConfirmacion()"
+    (confirm)="eliminarConfirmado()"
+  />
+</section>

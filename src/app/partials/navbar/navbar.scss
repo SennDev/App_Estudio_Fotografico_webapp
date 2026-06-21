@@ -1,0 +1,76 @@
+.top-navbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  width: min(100%, 1120px);
+  margin: 0 auto;
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--app-border) 64%, transparent);
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--app-highlight) 34%, transparent), transparent),
+    color-mix(in srgb, var(--app-bg) 82%, transparent);
+  backdrop-filter: blur(18px);
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--app-text);
+  text-decoration: none;
+}
+
+.brand-icon {
+  display: grid;
+  width: 2.75rem;
+  height: 2.75rem;
+  place-items: center;
+  border: 1px solid var(--app-border);
+  border-radius: 1rem;
+  background:
+    radial-gradient(circle at 30% 20%, color-mix(in srgb, var(--app-secondary) 16%, transparent), transparent 1.8rem),
+    linear-gradient(145deg, var(--app-surface), var(--app-elevated));
+  box-shadow: var(--app-shadow-soft);
+  color: var(--app-primary);
+  font-size: 1.25rem;
+}
+
+strong,
+small {
+  display: block;
+}
+
+strong {
+  line-height: 1.1;
+  font-size: 1rem;
+  letter-spacing: 0;
+}
+
+small {
+  margin-top: 0.1rem;
+  color: var(--app-muted-text);
+  font-size: 0.78rem;
+}
+
+.admin-link {
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.65rem 0.9rem;
+  border: 1px solid var(--app-border);
+  border-radius: 999px;
+  background: var(--app-glass);
+  color: var(--app-text);
+  text-decoration: none;
+  box-shadow: var(--app-shadow-soft);
+  backdrop-filter: blur(12px);
+}
+
+@media (min-width: 768px) {
+  .top-navbar {
+    padding: 1rem 1.5rem;
+  }
+}

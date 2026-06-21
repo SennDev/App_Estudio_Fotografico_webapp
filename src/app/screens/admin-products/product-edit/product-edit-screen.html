@@ -1,0 +1,149 @@
+<section class="mobile-page product-form-page">
+  <div class="screen-heading">
+    <span class="app-section-kicker">Edicion de producto</span>
+    <h1 class="app-section-title">Editar producto</h1>
+    <p class="app-muted">Actualiza la informacion del producto o servicio seleccionado.</p>
+  </div>
+
+  @if (successMessage) {
+    <div class="alert app-alert-success" role="status">
+      <i class="bi bi-check-circle"></i>
+      <span>{{ successMessage }}</span>
+    </div>
+  }
+
+  @if (errorMessage) {
+    <div class="alert app-alert-error" role="alert">
+      <i class="bi bi-exclamation-triangle"></i>
+      <span>{{ errorMessage }}</span>
+    </div>
+  }
+
+  @if (loading) {
+    <div class="state-card app-card">
+      <div class="spinner-border" role="status" aria-label="Cargando producto"></div>
+      <p>Cargando formulario...</p>
+    </div>
+  } @else {
+    <form class="app-card app-card-glass product-form" [formGroup]="form" (ngSubmit)="guardar()">
+      <div class="form-grid">
+        <div class="app-field field">
+          <label for="nombre">Nombre</label>
+          <input
+            id="nombre"
+            type="text"
+            class="form-control app-control"
+            [class.is-invalid]="isInvalid('nombre')"
+            [attr.aria-invalid]="isInvalid('nombre')"
+            formControlName="nombre"
+          />
+          @if (isInvalid('nombre')) {
+            <small>{{ getErrorMessage('nombre') }}</small>
+          }
+        </div>
+
+        <div class="app-field field">
+          <label for="categoria_id">Categoria</label>
+          <select
+            id="categoria_id"
+            class="form-select app-control"
+            [class.is-invalid]="isInvalid('categoria_id')"
+            [attr.aria-invalid]="isInvalid('categoria_id')"
+            formControlName="categoria_id"
+          >
+            <option [ngValue]="0">Selecciona una categoria</option>
+            @for (categoria of categorias; track categoria.id) {
+              <option [ngValue]="categoria.id">{{ categoria.nombre }}</option>
+            }
+          </select>
+          @if (isInvalid('categoria_id')) {
+            <small>{{ getErrorMessage('categoria_id') }}</small>
+          }
+        </div>
+
+        <div class="app-field field">
+          <label for="precio">Precio</label>
+          <input
+            id="precio"
+            type="number"
+            min="0"
+            max="999999"
+            step="0.01"
+            class="form-control app-control"
+            [class.is-invalid]="isInvalid('precio')"
+            [attr.aria-invalid]="isInvalid('precio')"
+            formControlName="precio"
+          />
+          @if (isInvalid('precio')) {
+            <small>{{ getErrorMessage('precio') }}</small>
+          }
+        </div>
+
+        <div class="app-field field">
+          <label for="stock">Stock</label>
+          <input
+            id="stock"
+            type="number"
+            min="0"
+            max="9999"
+            step="1"
+            class="form-control app-control"
+            [class.is-invalid]="isInvalid('stock')"
+            [attr.aria-invalid]="isInvalid('stock')"
+            formControlName="stock"
+          />
+          @if (isInvalid('stock')) {
+            <small>{{ getErrorMessage('stock') }}</small>
+          }
+        </div>
+
+        <div class="app-field field field-full">
+          <label for="imagen_url">URL de imagen</label>
+          <input
+            id="imagen_url"
+            type="text"
+            class="form-control app-control"
+            [class.is-invalid]="isInvalid('imagen_url')"
+            [attr.aria-invalid]="isInvalid('imagen_url')"
+            formControlName="imagen_url"
+            placeholder="assets/img/productos/archivo.jpg"
+          />
+          @if (isInvalid('imagen_url')) {
+            <small>{{ getErrorMessage('imagen_url') }}</small>
+          }
+        </div>
+
+        <div class="app-field field field-full">
+          <label for="descripcion">Descripcion</label>
+          <textarea
+            id="descripcion"
+            rows="5"
+            class="form-control app-control"
+            [class.is-invalid]="isInvalid('descripcion')"
+            [attr.aria-invalid]="isInvalid('descripcion')"
+            formControlName="descripcion"
+          ></textarea>
+          @if (isInvalid('descripcion')) {
+            <small>{{ getErrorMessage('descripcion') }}</small>
+          }
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="app-button ghost" (click)="volver()">Cancelar</button>
+        <button
+          type="submit"
+          class="app-button primary pressable"
+          [disabled]="form.invalid || saving || loading"
+        >
+          @if (saving) {
+            <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+          } @else {
+            <i class="bi bi-save"></i>
+          }
+          Actualizar
+        </button>
+      </div>
+    </form>
+  }
+</section>

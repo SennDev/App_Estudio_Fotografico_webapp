@@ -1,0 +1,104 @@
+.order-page {
+  display: grid;
+  gap: 1rem;
+}
+
+.order-form {
+  display: grid;
+  gap: 1.1rem;
+  border-radius: var(--app-radius-lg);
+}
+
+.form-grid {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.field {
+  display: grid;
+  gap: 0.4rem;
+}
+
+label {
+  color: var(--app-muted-text);
+  font-size: 0.86rem;
+  font-weight: 800;
+}
+
+small {
+  color: var(--app-error);
+  font-weight: 700;
+}
+
+textarea {
+  resize: vertical;
+}
+
+.total-panel {
+  display: grid;
+  gap: 0.7rem;
+  padding: 1.05rem;
+  border-radius: 1.2rem;
+}
+
+.total-panel span,
+.total-panel strong {
+  display: block;
+}
+
+.total-panel span {
+  color: var(--app-muted-text);
+  font-weight: 800;
+  font-size: 0.82rem;
+}
+
+.total-panel strong {
+  color: var(--app-primary);
+  font-size: clamp(1.9rem, 9vw, 2.5rem);
+  line-height: 1.1;
+}
+
+.total-panel p {
+  margin: 0;
+  color: var(--app-muted-text);
+  font-size: 0.9rem;
+}
+
+.selected-product {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.2rem;
+  padding: 0.7rem 0.8rem;
+  border: 1px solid color-mix(in srgb, var(--app-accent) 26%, var(--app-border));
+  border-radius: 0.95rem;
+  background: color-mix(in srgb, var(--app-accent) 10%, transparent);
+  color: var(--app-accent);
+  font-weight: 800;
+  font-size: 0.88rem;
+}
+
+.submit-button {
+  width: 100%;
+}
+
+@media (min-width: 820px) {
+  .order-form {
+    grid-template-columns: 1fr 320px;
+    align-items: start;
+  }
+
+  .form-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .field-full {
+    grid-column: 1 / -1;
+  }
+
+  .submit-button {
+    grid-column: 1 / -1;
+    justify-self: start;
+    width: auto;
+  }
+}
