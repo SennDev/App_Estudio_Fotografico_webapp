@@ -5,6 +5,8 @@
     <p class="app-muted">Registra un producto o servicio para mostrarlo en el catalogo.</p>
   </div>
 
+  <app-admin-nav />
+
   @if (successMessage) {
     <div class="alert app-alert-success" role="status">
       <i class="bi bi-check-circle"></i>
@@ -12,14 +14,25 @@
     </div>
   }
 
-  @if (errorMessage) {
+  @if (errorMessage && !categoryLoadError) {
     <div class="alert app-alert-error" role="alert">
       <i class="bi bi-exclamation-triangle"></i>
       <span>{{ errorMessage }}</span>
     </div>
   }
 
-  <form class="app-card app-card-glass product-form" [formGroup]="form" (ngSubmit)="guardar()">
+  @if (categoryLoadError) {
+    <div class="app-card app-error-state" role="alert">
+      <i class="bi bi-wifi-off"></i>
+      <h2>No se pudieron cargar categorias</h2>
+      <p>{{ errorMessage }}</p>
+      <button type="button" class="app-button secondary pressable" (click)="cargarCategorias()">
+        <i class="bi bi-arrow-clockwise"></i>
+        Reintentar
+      </button>
+    </div>
+  } @else {
+    <form class="app-card app-card-glass product-form" [formGroup]="form" (ngSubmit)="guardar()">
     <div class="form-grid">
       <div class="app-field field">
         <label for="nombre">Nombre</label>
@@ -30,6 +43,7 @@
           [class.is-invalid]="isInvalid('nombre')"
           [attr.aria-invalid]="isInvalid('nombre')"
           formControlName="nombre"
+          [attr.maxlength]="maxProductNameLength"
           placeholder="Ej. Impresion 4x6"
         />
         @if (isInvalid('nombre')) {
@@ -64,7 +78,7 @@
           id="precio"
           type="number"
           min="0"
-          max="999999"
+          [attr.max]="maxProductPrice"
           step="0.01"
           class="form-control app-control"
           [class.is-invalid]="isInvalid('precio')"
@@ -82,7 +96,7 @@
           id="stock"
           type="number"
           min="0"
-          max="9999"
+          [attr.max]="maxProductStock"
           step="1"
           class="form-control app-control"
           [class.is-invalid]="isInvalid('stock')"
@@ -119,6 +133,7 @@
           [class.is-invalid]="isInvalid('descripcion')"
           [attr.aria-invalid]="isInvalid('descripcion')"
           formControlName="descripcion"
+          [attr.maxlength]="maxProductDescriptionLength"
           placeholder="Describe el producto o servicio en al menos 10 caracteres."
         ></textarea>
         @if (isInvalid('descripcion')) {
@@ -142,5 +157,6 @@
         Guardar
       </button>
     </div>
-  </form>
+    </form>
+  }
 </section>

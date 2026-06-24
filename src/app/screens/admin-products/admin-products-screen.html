@@ -9,11 +9,33 @@
       </p>
     </div>
 
-    <a class="app-button primary" routerLink="/admin/productos/nuevo">
+    <a class="app-button primary pressable" routerLink="/admin/productos/nuevo">
       <i class="bi bi-plus-lg"></i>
       Nuevo
     </a>
   </div>
+
+  <app-admin-nav />
+
+  <div class="crud-strip" aria-label="Resumen CRUD">
+    <span><i class="bi bi-search"></i> Consultar</span>
+    <span><i class="bi bi-plus-circle"></i> Insertar</span>
+    <span><i class="bi bi-pencil-square"></i> Actualizar</span>
+    <span><i class="bi bi-eye-slash"></i> Baja logica</span>
+  </div>
+
+  @if (!loading && !errorMessage && productos.length > 0) {
+    <div class="admin-summary">
+      <div class="liquid-surface">
+        <span>Activos</span>
+        <strong>{{ productosActivos }}</strong>
+      </div>
+      <div class="liquid-surface">
+        <span>Inactivos</span>
+        <strong>{{ productosInactivos }}</strong>
+      </div>
+    </div>
+  }
 
   @if (successMessage) {
     <div class="alert app-alert-success" role="status">
@@ -22,23 +44,46 @@
     </div>
   }
 
-  @if (errorMessage) {
+  @if (actionError) {
     <div class="alert app-alert-error" role="alert">
       <i class="bi bi-exclamation-triangle"></i>
-      <span>{{ errorMessage }}</span>
+      <span>{{ actionError }}</span>
     </div>
   }
 
   @if (loading) {
-    <div class="state-card app-card">
-      <div class="spinner-border" role="status" aria-label="Cargando productos"></div>
-      <p>Cargando administracion...</p>
+    <div class="skeleton-grid" aria-label="Cargando administracion de productos">
+      @for (item of skeletonCards; track item) {
+        <article class="app-card skeleton-card">
+          <div class="skeleton-body">
+            <div class="skeleton-chip"></div>
+            <div class="skeleton-line"></div>
+            <div class="skeleton-line medium"></div>
+            <div class="skeleton-line"></div>
+            <div class="skeleton-button"></div>
+          </div>
+        </article>
+      }
+    </div>
+  } @else if (loadError) {
+    <div class="app-card app-error-state" role="alert">
+      <i class="bi bi-wifi-off"></i>
+      <h2>No se pudo cargar el CRUD</h2>
+      <p>{{ errorMessage }}</p>
+      <button type="button" class="app-button secondary pressable" (click)="cargarProductos()">
+        <i class="bi bi-arrow-clockwise"></i>
+        Reintentar
+      </button>
     </div>
   } @else if (productos.length === 0) {
-    <div class="state-card app-card">
+    <div class="app-card app-empty-state">
       <i class="bi bi-box"></i>
       <h2>No hay productos registrados</h2>
       <p>Crea el primer producto del catalogo.</p>
+      <a class="app-button primary pressable" routerLink="/admin/productos/nuevo">
+        <i class="bi bi-plus-lg"></i>
+        Crear producto
+      </a>
     </div>
   } @else {
     <div class="admin-list">
@@ -64,14 +109,19 @@
           </div>
 
           <div class="admin-actions">
-            <a class="app-button compact secondary" [routerLink]="['/admin/productos/editar', producto.id]">
+            <a
+              class="app-button compact secondary pressable"
+              [routerLink]="['/admin/productos/editar', producto.id]"
+              [attr.aria-label]="'Editar ' + producto.nombre"
+            >
               <i class="bi bi-pencil"></i>
               Editar
             </a>
             <button
               type="button"
-              class="app-button compact danger"
-              [disabled]="!producto.activo"
+              class="app-button compact danger pressable"
+              [disabled]="!producto.activo || deleting"
+              [attr.aria-label]="'Desactivar ' + producto.nombre"
               (click)="abrirConfirmacion(producto)"
             >
               <i class="bi bi-eye-slash"></i>

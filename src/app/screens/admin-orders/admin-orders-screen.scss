@@ -1,0 +1,145 @@
+.admin-orders-page {
+  display: grid;
+  gap: 1rem;
+}
+
+.orders-grid {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.order-card {
+  display: grid;
+  gap: 0.9rem;
+  background: var(--app-glass);
+  backdrop-filter: blur(12px);
+}
+
+.order-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.order-id {
+  color: var(--app-primary);
+  font-size: 0.78rem;
+  font-weight: 900;
+}
+
+h2,
+p {
+  margin: 0;
+}
+
+h2 {
+  font-size: 1.15rem;
+}
+
+p,
+.order-meta {
+  color: var(--app-muted-text);
+}
+
+.status-badge {
+  padding: 0.42rem 0.65rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--app-muted-text) 12%, transparent);
+  color: var(--app-muted-text);
+  font-size: 0.72rem;
+  font-weight: 900;
+}
+
+.status-pendiente {
+  background: color-mix(in srgb, var(--app-warning) 16%, transparent);
+  color: var(--app-warning);
+}
+
+.status-confirmado {
+  background: color-mix(in srgb, var(--app-accent) 16%, transparent);
+  color: var(--app-accent);
+}
+
+.status-cancelado {
+  background: color-mix(in srgb, var(--app-error) 14%, transparent);
+  color: var(--app-error);
+}
+
+.status-entregado {
+  background: color-mix(in srgb, var(--app-success) 16%, transparent);
+  color: var(--app-success);
+}
+
+.order-meta {
+  display: grid;
+  gap: 0.35rem;
+  font-size: 0.88rem;
+}
+
+.order-meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.order-values {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.65rem;
+}
+
+.order-values div {
+  padding: 0.8rem;
+  border: 1px solid var(--app-border);
+  border-radius: 1rem;
+  background: color-mix(in srgb, var(--app-elevated) 76%, transparent);
+}
+
+.order-values span,
+.order-values strong {
+  display: block;
+}
+
+.order-values span {
+  color: var(--app-muted-text);
+  font-size: 0.76rem;
+  font-weight: 850;
+}
+
+.observations {
+  padding: 0.75rem 0.85rem;
+  border-radius: 0.95rem;
+  background: color-mix(in srgb, var(--app-secondary) 10%, transparent);
+}
+
+.status-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.5rem;
+}
+
+.status-button {
+  min-height: 2.55rem;
+  border: 1px solid var(--app-border);
+  border-radius: 999px;
+  background: var(--app-elevated);
+  color: var(--app-muted-text);
+  font-weight: 850;
+}
+
+.status-button.active {
+  border-color: color-mix(in srgb, var(--app-primary) 32%, var(--app-border));
+  background: color-mix(in srgb, var(--app-primary) 14%, transparent);
+  color: var(--app-primary);
+}
+
+.status-button:disabled:not(.active) {
+  opacity: 0.55;
+}
+
+@media (min-width: 768px) {
+  .orders-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

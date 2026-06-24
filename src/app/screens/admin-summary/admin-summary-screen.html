@@ -1,0 +1,103 @@
+<section class="mobile-page admin-summary-page">
+  <div class="admin-header">
+    <div>
+      <span class="app-section-kicker">Panel interno</span>
+      <h1 class="app-section-title">Resumen del estudio</h1>
+      <p class="app-muted">
+        Indicadores calculados desde productos, categorias y pedidos conectados a la API.
+      </p>
+    </div>
+  </div>
+
+  <app-admin-nav />
+
+  @if (loading) {
+    <div class="summary-grid" aria-label="Cargando resumen">
+      @for (item of skeletonCards; track item) {
+        <div class="app-card skeleton-card">
+          <div class="skeleton-body">
+            <div class="skeleton-chip"></div>
+            <div class="skeleton-line"></div>
+            <div class="skeleton-line short"></div>
+          </div>
+        </div>
+      }
+    </div>
+  } @else if (errorMessage) {
+    <div class="app-card app-error-state" role="alert">
+      <i class="bi bi-wifi-off"></i>
+      <h2>No se pudo cargar el resumen</h2>
+      <p>{{ errorMessage }}</p>
+      <button type="button" class="app-button secondary pressable" (click)="cargarResumen()">
+        <i class="bi bi-arrow-clockwise"></i>
+        Reintentar
+      </button>
+    </div>
+  } @else {
+    <div class="summary-grid">
+      <article class="summary-card liquid-surface">
+        <i class="bi bi-box-seam"></i>
+        <span>Productos activos</span>
+        <strong>{{ productosActivos.length }}</strong>
+      </article>
+      <article class="summary-card liquid-surface">
+        <i class="bi bi-eye-slash"></i>
+        <span>Inactivos</span>
+        <strong>{{ productosInactivos.length }}</strong>
+      </article>
+      <article class="summary-card liquid-surface">
+        <i class="bi bi-tags"></i>
+        <span>Categorias</span>
+        <strong>{{ categorias.length }}</strong>
+      </article>
+      <article class="summary-card liquid-surface">
+        <i class="bi bi-receipt"></i>
+        <span>Pedidos</span>
+        <strong>{{ pedidos.length }}</strong>
+      </article>
+      <article class="summary-card liquid-surface">
+        <i class="bi bi-hourglass-split"></i>
+        <span>Pendientes</span>
+        <strong>{{ pedidosPendientes }}</strong>
+      </article>
+      <article class="summary-card liquid-surface wide">
+        <i class="bi bi-cash-coin"></i>
+        <span>Valor estimado de inventario</span>
+        <strong>{{ valorInventario | currency: 'MXN' : 'symbol' : '1.0-2' }}</strong>
+      </article>
+    </div>
+
+    @if (pedidosNoDisponibles) {
+      <div class="alert app-alert-error" role="alert">
+        <i class="bi bi-info-circle"></i>
+        <span>Los pedidos no estan disponibles en este momento, pero el resumen de productos si cargo.</span>
+      </div>
+    }
+
+    <section class="app-card low-stock-card">
+      <div class="section-row">
+        <div>
+          <span class="app-section-kicker">Inventario</span>
+          <h2>Productos con bajo stock</h2>
+        </div>
+        <a routerLink="/admin/productos">Administrar</a>
+      </div>
+
+      @if (bajoStock.length === 0) {
+        <div class="mini-empty">
+          <i class="bi bi-check-circle"></i>
+          <span>Todo el inventario activo tiene stock suficiente.</span>
+        </div>
+      } @else {
+        <div class="low-stock-list">
+          @for (producto of bajoStock; track producto.id) {
+            <a [routerLink]="['/admin/productos/editar', producto.id]">
+              <span>{{ producto.nombre }}</span>
+              <strong>{{ producto.stock }} disp.</strong>
+            </a>
+          }
+        </div>
+      }
+    </section>
+  }
+</section>

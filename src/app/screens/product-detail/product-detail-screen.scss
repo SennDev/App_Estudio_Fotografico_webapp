@@ -1,15 +1,53 @@
+.detail-page {
+  display: grid;
+  gap: 1rem;
+}
+
 .detail-card {
   overflow: hidden;
   padding: 0;
   background: var(--app-glass);
   backdrop-filter: blur(12px);
+  animation: card-enter 260ms ease-out both;
 }
 
 .detail-media {
+  position: relative;
   aspect-ratio: 4 / 3;
   background:
     radial-gradient(circle at 75% 20%, color-mix(in srgb, var(--app-secondary) 24%, transparent), transparent 11rem),
     color-mix(in srgb, var(--app-primary) 12%, var(--app-surface));
+}
+
+.favorite-button {
+  position: absolute;
+  top: 0.9rem;
+  right: 0.9rem;
+  z-index: 3;
+  display: grid;
+  width: 3rem;
+  height: 3rem;
+  place-items: center;
+  border: 1px solid rgb(255 255 255 / 42%);
+  border-radius: 999px;
+  background: rgb(255 255 255 / 76%);
+  color: var(--app-primary);
+  box-shadow: 0 0.55rem 1.4rem rgb(0 0 0 / 18%);
+  backdrop-filter: blur(12px);
+  transition:
+    transform 170ms ease,
+    color 170ms ease,
+    background 170ms ease;
+}
+
+.favorite-button.active {
+  background: color-mix(in srgb, var(--app-error) 16%, var(--app-elevated));
+  color: var(--app-error);
+  animation: heart-pop 240ms ease-out both;
+}
+
+.favorite-button:active {
+  transform: scale(0.9);
 }
 
 .detail-media img,
@@ -94,6 +132,32 @@ p {
 .detail-actions {
   display: grid;
   gap: 0.7rem;
+}
+
+@keyframes card-enter {
+  from {
+    opacity: 0;
+    transform: translateY(0.6rem) scale(0.985);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes heart-pop {
+  0% {
+    transform: scale(0.86);
+  }
+
+  70% {
+    transform: scale(1.12);
+  }
+
+  100% {
+    transform: scale(1);
+  }
 }
 
 @media (min-width: 768px) {

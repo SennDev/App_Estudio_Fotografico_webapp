@@ -335,6 +335,126 @@ a {
     var(--app-glass);
 }
 
+.app-empty-state,
+.app-error-state,
+.app-loading-state {
+  display: grid;
+  min-height: 14rem;
+  place-items: center;
+  align-content: center;
+  gap: 0.85rem;
+  padding: 1.25rem;
+  text-align: center;
+  animation: state-pop 260ms ease-out both;
+}
+
+.app-empty-state i,
+.app-error-state i,
+.app-loading-state i {
+  display: grid;
+  width: 3.35rem;
+  height: 3.35rem;
+  place-items: center;
+  border-radius: 1.1rem;
+  background: color-mix(in srgb, var(--app-primary) 12%, transparent);
+  color: var(--app-primary);
+  font-size: 1.55rem;
+  box-shadow: inset 0 1px 0 var(--app-highlight);
+}
+
+.app-error-state i {
+  background: color-mix(in srgb, var(--app-error) 12%, transparent);
+  color: var(--app-error);
+}
+
+.app-empty-state h2,
+.app-error-state h2,
+.app-loading-state h2,
+.app-empty-state p,
+.app-error-state p,
+.app-loading-state p {
+  margin: 0;
+}
+
+.app-empty-state p,
+.app-error-state p,
+.app-loading-state p {
+  max-width: 32rem;
+  color: var(--app-muted-text);
+}
+
+.skeleton-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.skeleton-card {
+  overflow: hidden;
+  padding: 0;
+}
+
+.skeleton,
+.skeleton-line,
+.skeleton-chip,
+.skeleton-button {
+  position: relative;
+  overflow: hidden;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--app-muted-text) 13%, transparent);
+}
+
+.skeleton::after,
+.skeleton-line::after,
+.skeleton-chip::after,
+.skeleton-button::after {
+  position: absolute;
+  inset: 0;
+  content: "";
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--app-highlight) 62%, transparent),
+    transparent
+  );
+  animation: shimmer 1.25s ease-in-out infinite;
+  transform: translateX(-100%);
+}
+
+.skeleton-media {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  border-radius: 0;
+}
+
+.skeleton-body {
+  display: grid;
+  gap: 0.7rem;
+  padding: 1rem;
+}
+
+.skeleton-line {
+  height: 0.85rem;
+}
+
+.skeleton-line.short {
+  width: 54%;
+}
+
+.skeleton-line.medium {
+  width: 72%;
+}
+
+.skeleton-chip {
+  width: 6rem;
+  height: 1.75rem;
+}
+
+.skeleton-button {
+  width: 7rem;
+  height: 2.5rem;
+  justify-self: end;
+}
+
 .state-card i {
   color: var(--app-primary);
   font-size: 2.5rem;
@@ -396,6 +516,36 @@ a {
   .app-card:hover {
     transform: translateY(-2px);
     box-shadow: var(--app-shadow-card);
+  }
+}
+
+@keyframes state-pop {
+  from {
+    opacity: 0;
+    transform: translateY(0.45rem) scale(0.985);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes shimmer {
+  to {
+    transform: translateX(100%);
+  }
+}
+
+@media (min-width: 680px) {
+  .skeleton-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .skeleton-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 

@@ -31,6 +31,20 @@ export const routes: Routes = [
       ),
   },
   {
+    path: 'admin/resumen',
+    loadComponent: () =>
+      import('./screens/admin-summary/admin-summary-screen').then(
+        (component) => component.AdminSummaryScreen,
+      ),
+  },
+  {
+    path: 'admin/pedidos',
+    loadComponent: () =>
+      import('./screens/admin-orders/admin-orders-screen').then(
+        (component) => component.AdminOrdersScreen,
+      ),
+  },
+  {
     path: 'admin/productos/nuevo',
     loadComponent: () =>
       import('./screens/admin-products/product-form/product-form-screen').then(

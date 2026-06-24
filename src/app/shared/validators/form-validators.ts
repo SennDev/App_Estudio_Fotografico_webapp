@@ -9,13 +9,15 @@ import {
   ORDER_MAX_DAYS_AHEAD,
 } from './validation.constants';
 
-const PERSON_NAME_PATTERN = /^[A-Za-zÁÉÍÓÚáéíóúÑñ]+(?: [A-Za-zÁÉÍÓÚáéíóúÑñ]+)*$/;
-const PRODUCT_NAME_PATTERN = /^[A-Za-zÁÉÍÓÚáéíóúÑñ0-9\s\-/'."&()]+$/;
-const HAS_PRODUCT_CONTENT_PATTERN = /[A-Za-zÁÉÍÓÚáéíóúÑñ0-9]/;
+const SPANISH_LETTERS =
+  'A-Za-z\\u00C1\\u00C9\\u00CD\\u00D3\\u00DA\\u00E1\\u00E9\\u00ED\\u00F3\\u00FA\\u00D1\\u00F1';
+const PERSON_NAME_PATTERN = new RegExp(`^[${SPANISH_LETTERS}]+(?: [${SPANISH_LETTERS}]+)*$`);
+const PRODUCT_NAME_PATTERN = new RegExp(`^[${SPANISH_LETTERS}0-9\\s\\-/'."&()]+$`);
+const HAS_PRODUCT_CONTENT_PATTERN = new RegExp(`[${SPANISH_LETTERS}0-9]`);
 const PHONE_INPUT_PATTERN = /^[0-9\s\-()]+$/;
 const DANGEROUS_TEXT_PATTERN = /<|>|`|\{|\}|\[|\]|script|javascript:/i;
 const IMAGE_URL_PATTERN =
-  /^(assets\/img\/productos\/[\wñÑáéíóúÁÉÍÓÚ./-]+\.(jpg|jpeg|png|webp)|https?:\/\/[^\s<>`{}[\]]+)$/i;
+  /^(assets\/img\/productos\/[\w\u00F1\u00D1\u00E1\u00E9\u00ED\u00F3\u00FA\u00C1\u00C9\u00CD\u00D3\u00DA./-]+\.(jpg|jpeg|png|webp)|https?:\/\/[^\s<>`{}[\]]+)$/i;
 
 export function normalizeSpaces(value: string): string {
   return value.trim().replace(/\s+/g, ' ');
@@ -93,6 +95,18 @@ export function mexicanPhoneValidator(): ValidatorFn {
   };
 }
 
+export function finiteNumberValidator(): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const value = control.value;
+
+    if (value === null || value === undefined || value === '') {
+      return null;
+    }
+
+    return Number.isFinite(Number(value)) ? null : { number: true };
+  };
+}
+
 export function integerValidator(): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
     const value = control.value;
@@ -102,6 +116,18 @@ export function integerValidator(): ValidatorFn {
     }
 
     return Number.isInteger(Number(value)) ? null : { integer: true };
+  };
+}
+
+export function selectedIdValidator(getAllowedIds: () => number[]): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const value = Number(control.value);
+
+    if (!Number.isInteger(value) || value <= 0) {
+      return null;
+    }
+
+    return getAllowedIds().includes(value) ? null : { selectedId: true };
   };
 }
 

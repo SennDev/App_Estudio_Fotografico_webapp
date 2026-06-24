@@ -9,6 +9,59 @@
   border-radius: var(--app-radius-lg);
 }
 
+.privacy-note {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.8rem 0.95rem;
+  border-radius: 1rem;
+  color: var(--app-muted-text);
+  font-size: 0.88rem;
+  font-weight: 750;
+}
+
+.privacy-note i {
+  color: var(--app-success);
+  font-size: 1.1rem;
+}
+
+.order-steps {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.45rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.order-steps li {
+  display: grid;
+  min-height: 4.2rem;
+  align-content: center;
+  justify-items: center;
+  gap: 0.35rem;
+  padding: 0.65rem 0.35rem;
+  border: 1px solid color-mix(in srgb, var(--app-border) 82%, var(--app-highlight));
+  border-radius: 1rem;
+  background: color-mix(in srgb, var(--app-elevated) 68%, transparent);
+  color: var(--app-muted-text);
+  font-size: 0.76rem;
+  font-weight: 850;
+  text-align: center;
+  box-shadow: inset 0 1px 0 var(--app-highlight);
+}
+
+.order-steps span {
+  display: grid;
+  width: 1.55rem;
+  height: 1.55rem;
+  place-items: center;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--app-primary) 16%, transparent);
+  color: var(--app-primary);
+  font-size: 0.78rem;
+}
+
 .form-grid {
   display: grid;
   gap: 0.9rem;
@@ -82,6 +135,80 @@ textarea {
   width: 100%;
 }
 
+.success-panel {
+  display: grid;
+  gap: 1rem;
+  border-radius: var(--app-radius-lg);
+  background:
+    radial-gradient(circle at 18% 0%, color-mix(in srgb, var(--app-success) 18%, transparent), transparent 10rem),
+    var(--app-glass);
+  text-align: center;
+  animation: success-pop 320ms ease-out both;
+}
+
+.success-icon {
+  display: grid;
+  width: 4rem;
+  height: 4rem;
+  place-items: center;
+  justify-self: center;
+  border-radius: 1.35rem;
+  background: color-mix(in srgb, var(--app-success) 16%, transparent);
+  color: var(--app-success);
+  font-size: 2rem;
+  box-shadow: inset 0 1px 0 var(--app-highlight);
+}
+
+.success-panel h2,
+.success-panel p {
+  margin: 0;
+}
+
+.success-panel p {
+  color: var(--app-muted-text);
+}
+
+.success-summary {
+  display: grid;
+  gap: 0.65rem;
+  text-align: left;
+}
+
+.success-summary div {
+  padding: 0.85rem;
+  border: 1px solid var(--app-border);
+  border-radius: 1rem;
+  background: color-mix(in srgb, var(--app-elevated) 72%, transparent);
+}
+
+.success-summary span,
+.success-summary strong {
+  display: block;
+}
+
+.success-summary span {
+  color: var(--app-muted-text);
+  font-size: 0.78rem;
+  font-weight: 850;
+}
+
+.success-actions {
+  display: grid;
+  gap: 0.7rem;
+}
+
+@keyframes success-pop {
+  from {
+    opacity: 0;
+    transform: translateY(0.75rem) scale(0.97);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
 @media (min-width: 820px) {
   .order-form {
     grid-template-columns: 1fr 320px;
@@ -100,5 +227,13 @@ textarea {
     grid-column: 1 / -1;
     justify-self: start;
     width: auto;
+  }
+
+  .success-summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .success-actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }

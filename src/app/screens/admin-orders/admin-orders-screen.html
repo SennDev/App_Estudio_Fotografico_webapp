@@ -1,0 +1,109 @@
+<section class="mobile-page admin-orders-page">
+  <div class="admin-header">
+    <div>
+      <span class="app-section-kicker">Gestion de pedidos</span>
+      <h1 class="app-section-title">Pedidos</h1>
+      <p class="app-muted">
+        Consulta solicitudes registradas y actualiza su estado sin cambiar contratos del backend.
+      </p>
+    </div>
+  </div>
+
+  <app-admin-nav />
+
+  @if (successMessage) {
+    <div class="alert app-alert-success" role="status">
+      <i class="bi bi-check-circle"></i>
+      <span>{{ successMessage }}</span>
+    </div>
+  }
+
+  @if (loading) {
+    <div class="skeleton-grid" aria-label="Cargando pedidos">
+      @for (item of skeletonCards; track item) {
+        <article class="app-card skeleton-card">
+          <div class="skeleton-body">
+            <div class="skeleton-chip"></div>
+            <div class="skeleton-line"></div>
+            <div class="skeleton-line medium"></div>
+            <div class="skeleton-button"></div>
+          </div>
+        </article>
+      }
+    </div>
+  } @else if (errorMessage) {
+    <div class="app-card app-error-state" role="alert">
+      <i class="bi bi-wifi-off"></i>
+      <h2>No se pudieron cargar pedidos</h2>
+      <p>{{ errorMessage }}</p>
+      <button type="button" class="app-button secondary pressable" (click)="cargarPedidos()">
+        <i class="bi bi-arrow-clockwise"></i>
+        Reintentar
+      </button>
+    </div>
+  } @else if (pedidos.length === 0) {
+    <div class="app-card app-empty-state">
+      <i class="bi bi-receipt"></i>
+      <h2>Aun no hay pedidos</h2>
+      <p>Cuando un cliente cree una solicitud, aparecera en esta area administrativa.</p>
+      <a class="app-button primary pressable" routerLink="/pedido">Crear pedido de prueba</a>
+    </div>
+  } @else {
+    <div class="orders-grid">
+      @for (pedido of pedidos; track pedido.id) {
+        <article class="app-card order-card">
+          <div class="order-top">
+            <div>
+              <span class="order-id">Pedido #{{ pedido.id }}</span>
+              <h2>{{ pedido.nombre_cliente }}</h2>
+              <p>{{ pedido.producto?.nombre || 'Producto no disponible' }}</p>
+            </div>
+            <span class="status-badge" [ngClass]="badgeClass(pedido.estado)">
+              {{ pedido.estado }}
+            </span>
+          </div>
+
+          <div class="order-meta">
+            <span><i class="bi bi-telephone"></i> {{ pedido.telefono_cliente }}</span>
+            @if (pedido.correo_cliente) {
+              <span><i class="bi bi-envelope"></i> {{ pedido.correo_cliente }}</span>
+            }
+            @if (pedido.fecha_evento) {
+              <span><i class="bi bi-calendar-event"></i> {{ pedido.fecha_evento }}</span>
+            }
+          </div>
+
+          <div class="order-values">
+            <div>
+              <span>Cantidad</span>
+              <strong>{{ pedido.cantidad }}</strong>
+            </div>
+            <div>
+              <span>Total</span>
+              <strong>{{ pedido.total_estimado | currency: 'MXN' : 'symbol' : '1.0-2' }}</strong>
+            </div>
+          </div>
+
+          @if (pedido.observaciones) {
+            <p class="observations">{{ pedido.observaciones }}</p>
+          }
+
+          <div class="status-actions" aria-label="Actualizar estado">
+            @for (estado of estados; track estado) {
+              <button
+                type="button"
+                class="status-button"
+                [class.active]="pedido.estado === estado"
+                [disabled]="pedido.estado === estado || !!updatingId"
+                [attr.aria-label]="'Cambiar pedido ' + pedido.id + ' a ' + estado"
+                (click)="actualizarEstado(pedido, estado)"
+              >
+                {{ estado }}
+              </button>
+            }
+          </div>
+        </article>
+      }
+    </div>
+  }
+</section>

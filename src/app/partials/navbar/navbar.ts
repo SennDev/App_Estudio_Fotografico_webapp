@@ -32,8 +32,16 @@ export class Navbar {
       return 'Crear pedido';
     }
 
+    if (this.currentUrl.startsWith('/admin/pedidos')) {
+      return 'Gestion de pedidos';
+    }
+
+    if (this.currentUrl.startsWith('/admin/resumen')) {
+      return 'Resumen administrativo';
+    }
+
     if (this.currentUrl.startsWith('/admin')) {
-      return 'Administracion de productos';
+      return 'Administracion';
     }
 
     if (this.currentUrl.startsWith('/producto')) {

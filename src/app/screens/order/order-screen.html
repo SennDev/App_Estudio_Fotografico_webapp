@@ -7,21 +7,82 @@
     </p>
   </div>
 
-  @if (successMessage) {
-    <div class="alert app-alert-success" role="status">
-      <i class="bi bi-check-circle"></i>
-      <span>{{ successMessage }}</span>
-    </div>
-  }
+  <div class="privacy-note liquid-surface">
+    <i class="bi bi-shield-check"></i>
+    <span>Usaremos tus datos unicamente para dar seguimiento a tu solicitud fotografica.</span>
+  </div>
 
-  @if (errorMessage) {
+  <ol class="order-steps" aria-label="Pasos para crear un pedido">
+    <li><span>1</span> Elige producto</li>
+    <li><span>2</span> Datos de contacto</li>
+    <li><span>3</span> Revisa total</li>
+  </ol>
+
+  @if (errorMessage && !loadError) {
     <div class="alert app-alert-error" role="alert">
       <i class="bi bi-exclamation-triangle"></i>
       <span>{{ errorMessage }}</span>
     </div>
   }
 
-  <form class="app-card app-card-glass order-form" [formGroup]="form" (ngSubmit)="enviarPedido()">
+  @if (orderSuccess) {
+    <section class="app-card success-panel" role="status">
+      <span class="success-icon">
+        <i class="bi bi-check2-circle"></i>
+      </span>
+      <div>
+        <span class="app-section-kicker">Solicitud registrada</span>
+        <h2>Gracias, {{ orderSuccess.cliente }}</h2>
+        <p>
+          Tu solicitud fue registrada correctamente. Lumiere Studios podra dar seguimiento a tu
+          pedido fotografico.
+        </p>
+      </div>
+
+      <div class="success-summary">
+        <div>
+          <span>Producto</span>
+          <strong>{{ orderSuccess.producto }}</strong>
+        </div>
+        <div>
+          <span>Cantidad</span>
+          <strong>{{ orderSuccess.cantidad }}</strong>
+        </div>
+        <div>
+          <span>Total estimado</span>
+          <strong>{{ orderSuccess.total | currency: 'MXN' : 'symbol' : '1.0-2' }}</strong>
+        </div>
+        @if (orderSuccess.fechaEvento) {
+          <div>
+            <span>Fecha del evento</span>
+            <strong>{{ orderSuccess.fechaEvento }}</strong>
+          </div>
+        }
+      </div>
+
+      <div class="success-actions">
+        <a class="app-button secondary pressable" routerLink="/catalogo">
+          <i class="bi bi-grid"></i>
+          Volver al catalogo
+        </a>
+        <button type="button" class="app-button primary pressable" (click)="crearOtroPedido()">
+          <i class="bi bi-plus-circle"></i>
+          Crear otro pedido
+        </button>
+      </div>
+    </section>
+  } @else if (loadError) {
+    <div class="app-card app-error-state" role="alert">
+      <i class="bi bi-wifi-off"></i>
+      <h2>No se pudo cargar el catalogo</h2>
+      <p>{{ errorMessage }}</p>
+      <button type="button" class="app-button secondary pressable" (click)="cargarProductos()">
+        <i class="bi bi-arrow-clockwise"></i>
+        Reintentar
+      </button>
+    </div>
+  } @else {
+    <form class="app-card app-card-glass order-form" [formGroup]="form" (ngSubmit)="enviarPedido()">
     <div class="form-grid">
       <div class="app-field field">
         <label for="nombre_cliente">Nombre del cliente</label>
@@ -33,6 +94,7 @@
           [attr.aria-invalid]="isInvalid('nombre_cliente')"
           autocomplete="name"
           formControlName="nombre_cliente"
+          [attr.maxlength]="maxCustomerNameLength"
           placeholder="Ej. Ana Sofia Nunez"
         />
         @if (isInvalid('nombre_cliente')) {
@@ -161,7 +223,7 @@
       @if (productoSeleccionado) {
         <div class="selected-product">
           <i class="bi bi-box-seam"></i>
-          <span>{{ productoSeleccionado.nombre }} · {{ productoSeleccionado.stock }} disponibles</span>
+          <span>{{ productoSeleccionado.nombre }} - {{ productoSeleccionado.stock }} disponibles</span>
         </div>
       }
     </aside>
@@ -178,5 +240,6 @@
       }
       Enviar pedido
     </button>
-  </form>
+    </form>
+  }
 </section>

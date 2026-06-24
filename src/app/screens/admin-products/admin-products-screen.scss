@@ -12,6 +12,64 @@
   width: 100%;
 }
 
+.crud-strip {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.55rem;
+}
+
+.crud-strip span {
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  padding: 0.6rem 0.7rem;
+  border: 1px solid var(--app-border);
+  border-radius: 999px;
+  background: var(--app-glass);
+  color: var(--app-muted-text);
+  box-shadow: var(--app-shadow-soft);
+  font-size: 0.78rem;
+  font-weight: 850;
+  backdrop-filter: blur(12px);
+}
+
+.crud-strip i {
+  color: var(--app-primary);
+}
+
+.admin-summary {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.admin-summary > div {
+  display: grid;
+  gap: 0.25rem;
+  padding: 0.9rem 1rem;
+  border-radius: 1.1rem;
+}
+
+.admin-summary span,
+.admin-summary strong {
+  position: relative;
+  z-index: 1;
+}
+
+.admin-summary span {
+  color: var(--app-muted-text);
+  font-size: 0.78rem;
+  font-weight: 850;
+}
+
+.admin-summary strong {
+  color: var(--app-primary);
+  font-size: 1.7rem;
+  line-height: 1;
+}
+
 .admin-list {
   display: grid;
   gap: 0.85rem;
@@ -121,6 +179,14 @@ p {
 
   .admin-header .app-button {
     width: auto;
+  }
+
+  .crud-strip {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .admin-summary {
+    max-width: 420px;
   }
 
   .admin-list {

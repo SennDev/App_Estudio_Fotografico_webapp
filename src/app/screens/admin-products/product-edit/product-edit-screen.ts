@@ -5,17 +5,21 @@ import { forkJoin } from 'rxjs';
 
 import { Categoria } from '../../../models/categoria.model';
 import { ProductoUpdate } from '../../../models/producto.model';
+import { AdminNav } from '../../../partials/admin-nav/admin-nav';
 import { CategoriaService } from '../../../services/categoria.service';
 import { ProductoService } from '../../../services/producto.service';
 import { SHARED_IMPORTS } from '../../../shared/shared_imports';
 import {
+  finiteNumberValidator,
   integerValidator,
   normalizeSpaces,
   optionalImageUrlValidator,
   productNameValidator,
   safeDescriptionValidator,
+  selectedIdValidator,
 } from '../../../shared/validators/form-validators';
 import {
+  MAX_PRODUCT_DESCRIPTION_LENGTH,
   MAX_PRODUCT_NAME_LENGTH,
   MAX_PRODUCT_PRICE,
   MAX_PRODUCT_STOCK,
@@ -24,7 +28,7 @@ import {
 
 @Component({
   selector: 'app-product-edit-screen',
-  imports: [...SHARED_IMPORTS],
+  imports: [...SHARED_IMPORTS, AdminNav],
   templateUrl: './product-edit-screen.html',
   styleUrl: './product-edit-screen.scss',
 })
@@ -38,10 +42,15 @@ export class ProductEditScreen implements OnInit {
   productoId = 0;
   categorias: Categoria[] = [];
   loading = false;
+  loadError = false;
   saving = false;
   submitted = false;
   successMessage = '';
   errorMessage = '';
+  readonly maxProductNameLength = MAX_PRODUCT_NAME_LENGTH;
+  readonly maxProductDescriptionLength = MAX_PRODUCT_DESCRIPTION_LENGTH;
+  readonly maxProductPrice = MAX_PRODUCT_PRICE;
+  readonly maxProductStock = MAX_PRODUCT_STOCK;
 
   form = this.fb.group({
     nombre: [
@@ -54,7 +63,15 @@ export class ProductEditScreen implements OnInit {
       ],
     ],
     descripcion: ['', [Validators.required, safeDescriptionValidator()]],
-    precio: [0, [Validators.required, Validators.min(0), Validators.max(MAX_PRODUCT_PRICE)]],
+    precio: [
+      0,
+      [
+        Validators.required,
+        finiteNumberValidator(),
+        Validators.min(0),
+        Validators.max(MAX_PRODUCT_PRICE),
+      ],
+    ],
     stock: [
       0,
       [
@@ -65,7 +82,14 @@ export class ProductEditScreen implements OnInit {
       ],
     ],
     imagen_url: ['', [optionalImageUrlValidator()]],
-    categoria_id: [0, [Validators.required, Validators.min(1)]],
+    categoria_id: [
+      0,
+      [
+        Validators.required,
+        Validators.min(1),
+        selectedIdValidator(() => this.categorias.map((categoria) => categoria.id)),
+      ],
+    ],
   });
 
   ngOnInit(): void {
@@ -81,6 +105,7 @@ export class ProductEditScreen implements OnInit {
 
   cargarDatos(): void {
     this.loading = true;
+    this.loadError = false;
     this.errorMessage = '';
 
     forkJoin({
@@ -97,21 +122,27 @@ export class ProductEditScreen implements OnInit {
           imagen_url: producto.imagen_url ?? '',
           categoria_id: producto.categoria_id,
         });
+        this.form.controls.categoria_id.updateValueAndValidity();
         this.loading = false;
       },
       error: () => {
         this.errorMessage = 'No se pudo cargar el producto para editar.';
+        this.loadError = true;
         this.loading = false;
       },
     });
   }
 
   guardar(): void {
+    if (this.saving) {
+      return;
+    }
+
     this.submitted = true;
     this.successMessage = '';
     this.errorMessage = '';
 
-    if (this.form.invalid) {
+    if (this.loading || this.form.invalid) {
       this.markFormAsTouched();
       return;
     }
@@ -166,12 +197,20 @@ export class ProductEditScreen implements OnInit {
       return 'El valor no puede ser negativo.';
     }
 
+    if (control.hasError('number')) {
+      return 'Ingresa un numero valido.';
+    }
+
     if (control.hasError('max')) {
       return `El valor maximo permitido es ${control.errors['max'].max}.`;
     }
 
     if (control.hasError('integer')) {
       return 'El stock debe ser un numero entero.';
+    }
+
+    if (control.hasError('selectedId')) {
+      return 'Selecciona una categoria disponible.';
     }
 
     if (control.hasError('imageUrl')) {

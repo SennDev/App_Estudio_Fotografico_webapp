@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 import { Producto } from '../../models/producto.model';
+import { LocalStorageService } from '../../services/local-storage.service';
 import { ProductoService } from '../../services/producto.service';
 import { SHARED_IMPORTS } from '../../shared/shared_imports';
 
@@ -20,6 +21,7 @@ export class ProductDetailScreen implements OnInit {
   constructor(
     private readonly route: ActivatedRoute,
     private readonly productoService: ProductoService,
+    private readonly localStorageService: LocalStorageService,
   ) {}
 
   ngOnInit(): void {
@@ -34,6 +36,7 @@ export class ProductDetailScreen implements OnInit {
     this.productoService.getProductoById(id).subscribe({
       next: (producto) => {
         this.producto = producto;
+        this.localStorageService.addRecentProduct(producto);
         this.loading = false;
       },
       error: () => {
@@ -48,7 +51,16 @@ export class ProductDetailScreen implements OnInit {
   }
 
   get imagenSrc(): string {
-    const url = this.producto?.imagen_url ?? '';
-    return url.startsWith('http') || url.startsWith('/') ? url : `/${url}`;
+    return this.producto?.imagen_url?.trim() ?? '';
+  }
+
+  get isFavorite(): boolean {
+    return this.producto ? this.localStorageService.isFavorite(this.producto.id) : false;
+  }
+
+  toggleFavorite(): void {
+    if (this.producto) {
+      this.localStorageService.toggleFavorite(this.producto.id);
+    }
   }
 }

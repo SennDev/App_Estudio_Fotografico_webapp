@@ -5,6 +5,8 @@
     <p class="app-muted">Actualiza la informacion del producto o servicio seleccionado.</p>
   </div>
 
+  <app-admin-nav />
+
   @if (successMessage) {
     <div class="alert app-alert-success" role="status">
       <i class="bi bi-check-circle"></i>
@@ -12,7 +14,7 @@
     </div>
   }
 
-  @if (errorMessage) {
+  @if (errorMessage && !loadError) {
     <div class="alert app-alert-error" role="alert">
       <i class="bi bi-exclamation-triangle"></i>
       <span>{{ errorMessage }}</span>
@@ -20,9 +22,25 @@
   }
 
   @if (loading) {
-    <div class="state-card app-card">
-      <div class="spinner-border" role="status" aria-label="Cargando producto"></div>
-      <p>Cargando formulario...</p>
+    <div class="app-card app-loading-state" aria-label="Cargando formulario de edicion">
+      <i class="bi bi-hourglass-split"></i>
+      <h2>Cargando producto</h2>
+      <p>Preparando los datos para editar.</p>
+      <div class="skeleton-line medium"></div>
+      <div class="skeleton-line"></div>
+    </div>
+  } @else if (loadError) {
+    <div class="app-card app-error-state" role="alert">
+      <i class="bi bi-wifi-off"></i>
+      <h2>No se pudo preparar la edicion</h2>
+      <p>{{ errorMessage }}</p>
+      <div class="form-actions">
+        <button type="button" class="app-button ghost pressable" (click)="volver()">Volver</button>
+        <button type="button" class="app-button secondary pressable" (click)="cargarDatos()">
+          <i class="bi bi-arrow-clockwise"></i>
+          Reintentar
+        </button>
+      </div>
     </div>
   } @else {
     <form class="app-card app-card-glass product-form" [formGroup]="form" (ngSubmit)="guardar()">
@@ -36,6 +54,7 @@
             [class.is-invalid]="isInvalid('nombre')"
             [attr.aria-invalid]="isInvalid('nombre')"
             formControlName="nombre"
+            [attr.maxlength]="maxProductNameLength"
           />
           @if (isInvalid('nombre')) {
             <small>{{ getErrorMessage('nombre') }}</small>
@@ -67,7 +86,7 @@
             id="precio"
             type="number"
             min="0"
-            max="999999"
+            [attr.max]="maxProductPrice"
             step="0.01"
             class="form-control app-control"
             [class.is-invalid]="isInvalid('precio')"
@@ -85,7 +104,7 @@
             id="stock"
             type="number"
             min="0"
-            max="9999"
+            [attr.max]="maxProductStock"
             step="1"
             class="form-control app-control"
             [class.is-invalid]="isInvalid('stock')"
@@ -122,6 +141,7 @@
             [class.is-invalid]="isInvalid('descripcion')"
             [attr.aria-invalid]="isInvalid('descripcion')"
             formControlName="descripcion"
+            [attr.maxlength]="maxProductDescriptionLength"
           ></textarea>
           @if (isInvalid('descripcion')) {
             <small>{{ getErrorMessage('descripcion') }}</small>

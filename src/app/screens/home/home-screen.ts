@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 
+import { ProductoLocalResumen } from '../../models/local-product.model';
+import { LocalStorageService } from '../../services/local-storage.service';
 import { SHARED_IMPORTS } from '../../shared/shared_imports';
 
 @Component({
@@ -9,6 +11,12 @@ import { SHARED_IMPORTS } from '../../shared/shared_imports';
   styleUrl: './home-screen.scss',
 })
 export class HomeScreen {
+  recientes: ProductoLocalResumen[] = [];
+
+  constructor(private readonly localStorageService: LocalStorageService) {
+    this.recientes = this.localStorageService.getRecentProducts();
+  }
+
   highlights = [
     {
       icon: 'bi-camera',

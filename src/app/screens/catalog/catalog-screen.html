@@ -7,42 +7,127 @@
     </p>
   </div>
 
-  <div class="app-card filter-card">
-    <label for="categoria">Filtrar por categoria</label>
-    <select
-      id="categoria"
-      class="form-select app-control"
-      [(ngModel)]="categoriaSeleccionada"
-      (change)="filtrarPorCategoria()"
-    >
-      <option [ngValue]="0">Todas las categorias</option>
-      @for (categoria of categorias; track categoria.id) {
-        <option [ngValue]="categoria.id">{{ categoria.nombre }}</option>
-      }
-    </select>
-  </div>
+  @if (!errorMessage) {
+    <div class="app-card filter-card">
+      <div class="filter-head">
+        <div>
+          <span class="filter-kicker">Explorar servicios</span>
+          <strong>{{ productosFiltrados.length }} resultados</strong>
+        </div>
+        @if (filtrosActivos > 0) {
+          <button type="button" class="clear-button" (click)="limpiarFiltros()">
+            Limpiar
+          </button>
+        }
+      </div>
+
+      <label class="search-box" for="busqueda">
+        <i class="bi bi-search"></i>
+        <input
+          id="busqueda"
+          type="search"
+          class="form-control app-control"
+          [(ngModel)]="searchTerm"
+          placeholder="Buscar sesion, impresion, album..."
+          autocomplete="off"
+        />
+      </label>
+
+      <div class="filter-grid">
+        <div class="field">
+          <label for="categoria">Categoria</label>
+          <select
+            id="categoria"
+            class="form-select app-control"
+            [(ngModel)]="categoriaSeleccionada"
+            (change)="filtrarPorCategoria()"
+            [disabled]="loading"
+          >
+            <option [ngValue]="0">Todas</option>
+            @for (categoria of categorias; track categoria.id) {
+              <option [ngValue]="categoria.id">{{ categoria.nombre }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="orden">Ordenar</label>
+          <select id="orden" class="form-select app-control" [(ngModel)]="sortOption">
+            <option value="nombre">Nombre A-Z</option>
+            <option value="precio_asc">Precio menor a mayor</option>
+            <option value="precio_desc">Precio mayor a menor</option>
+            <option value="stock_desc">Disponibles primero</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="filter-actions">
+        <button
+          type="button"
+          class="chip-toggle"
+          [class.active]="soloFavoritos"
+          (click)="soloFavoritos = !soloFavoritos"
+        >
+          <i class="bi" [class.bi-heart-fill]="soloFavoritos" [class.bi-heart]="!soloFavoritos"></i>
+          Favoritos
+        </button>
+        @if (searchTerm.trim()) {
+          <span class="active-chip">Busqueda: "{{ searchTerm.trim() }}"</span>
+        }
+        @if (categoriaSeleccionada) {
+          <span class="active-chip">{{ categoriaActivaNombre }}</span>
+        }
+      </div>
+    </div>
+  }
 
   @if (loading) {
-    <div class="state-card app-card">
-      <div class="spinner-border" role="status" aria-label="Cargando catalogo"></div>
-      <p>Cargando productos...</p>
+    <div class="skeleton-grid" aria-label="Cargando catalogo">
+      @for (item of skeletonCards; track item) {
+        <article class="app-card skeleton-card">
+          <div class="skeleton skeleton-media"></div>
+          <div class="skeleton-body">
+            <div class="skeleton-chip"></div>
+            <div class="skeleton-line"></div>
+            <div class="skeleton-line medium"></div>
+            <div class="skeleton-button"></div>
+          </div>
+        </article>
+      }
     </div>
   } @else if (errorMessage) {
-    <div class="alert app-alert-error" role="alert">
+    <div class="app-card app-error-state" role="alert">
       <i class="bi bi-wifi-off"></i>
-      <span>{{ errorMessage }}</span>
+      <h2>Servidor no disponible</h2>
+      <p>{{ errorMessage }}</p>
+      <button type="button" class="app-button secondary pressable" (click)="cargarDatos()">
+        <i class="bi bi-arrow-clockwise"></i>
+        Reintentar
+      </button>
     </div>
-  } @else if (productos.length === 0) {
-    <div class="state-card app-card">
-      <i class="bi bi-camera"></i>
-      <h2>No hay productos para mostrar</h2>
-      <p>Prueba con otra categoria o revisa los datos iniciales del backend.</p>
+  } @else if (productosFiltrados.length === 0) {
+    <div class="app-card app-empty-state">
+      <i class="bi bi-search-heart"></i>
+      <h2>No encontramos coincidencias</h2>
+      <p>Ajusta la busqueda, cambia la categoria o limpia los filtros para ver todo el catalogo.</p>
+      <button type="button" class="app-button secondary pressable" (click)="limpiarFiltros()">
+        Limpiar filtros
+      </button>
     </div>
   } @else {
     <div class="product-grid">
-      @for (producto of productos; track trackProducto($index, producto)) {
+      @for (producto of productosFiltrados; track trackProducto($index, producto)) {
         <article class="app-card product-card">
           <div class="product-media">
+            <button
+              type="button"
+              class="favorite-button"
+              [class.active]="isFavorite(producto.id)"
+              [attr.aria-label]="isFavorite(producto.id) ? 'Quitar de favoritos' : 'Agregar a favoritos'"
+              (click)="toggleFavorite(producto)"
+            >
+              <i class="bi" [class.bi-heart-fill]="isFavorite(producto.id)" [class.bi-heart]="!isFavorite(producto.id)"></i>
+            </button>
             @if (imagenDisponible(producto)) {
               <img
                 [src]="imagenSrc(producto)"
@@ -70,7 +155,7 @@
 
             <div class="product-footer">
               <strong>{{ producto.precio | currency: 'MXN' : 'symbol' : '1.0-2' }}</strong>
-              <a class="app-button compact" [routerLink]="['/producto', producto.id]">
+              <a class="app-button compact secondary pressable" [routerLink]="['/producto', producto.id]">
                 Ver detalle
               </a>
             </div>

@@ -46,6 +46,49 @@
     }
   </section>
 
+  <section class="flow-strip" aria-label="Flujo principal de la aplicacion">
+    <article class="liquid-surface">
+      <i class="bi bi-grid"></i>
+      <span>Explora catalogo</span>
+    </article>
+    <article class="liquid-surface">
+      <i class="bi bi-camera"></i>
+      <span>Revisa detalles</span>
+    </article>
+    <article class="liquid-surface">
+      <i class="bi bi-bag-check"></i>
+      <span>Crea pedido</span>
+    </article>
+    <article class="liquid-surface">
+      <i class="bi bi-sliders"></i>
+      <span>Administra CRUD</span>
+    </article>
+  </section>
+
+  @if (recientes.length > 0) {
+    <section class="recent-section">
+      <div class="section-row">
+        <div>
+          <span class="app-section-kicker">Vistos recientemente</span>
+          <h2>Retoma tu exploracion</h2>
+        </div>
+        <a routerLink="/catalogo">Ver catalogo</a>
+      </div>
+
+      <div class="recent-scroll" aria-label="Productos vistos recientemente">
+        @for (producto of recientes; track producto.id) {
+          <a class="recent-card liquid-surface" [routerLink]="['/producto', producto.id]">
+            <span class="recent-icon">
+              <i class="bi bi-camera"></i>
+            </span>
+            <strong>{{ producto.nombre }}</strong>
+            <small>{{ producto.precio | currency: 'MXN' : 'symbol' : '1.0-2' }}</small>
+          </a>
+        }
+      </div>
+    </section>
+  }
+
   <section class="app-card about-card">
     <div>
       <span class="app-section-kicker">Proyecto escolar</span>

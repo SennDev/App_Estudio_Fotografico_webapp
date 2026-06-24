@@ -4,17 +4,17 @@
     <span>Home</span>
   </a>
 
-  <a routerLink="/catalogo" routerLinkActive="active">
+  <a routerLink="/catalogo" [class.active]="isCatalogActive">
     <i class="bi bi-grid"></i>
     <span>Catalogo</span>
   </a>
 
-  <a routerLink="/pedido" routerLinkActive="active">
+  <a routerLink="/pedido" [class.active]="isOrderActive">
     <i class="bi bi-bag-check"></i>
     <span>Pedido</span>
   </a>
 
-  <a routerLink="/admin/productos" routerLinkActive="active">
+  <a routerLink="/admin/resumen" [class.active]="isAdminActive">
     <i class="bi bi-sliders"></i>
     <span>Admin</span>
   </a>

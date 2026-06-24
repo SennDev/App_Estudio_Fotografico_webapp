@@ -8,6 +8,7 @@ import { PedidoService } from '../../services/pedido.service';
 import { ProductoService } from '../../services/producto.service';
 import { SHARED_IMPORTS } from '../../shared/shared_imports';
 import {
+  addLocalDays,
   futureDateRangeValidator,
   integerValidator,
   localDateInputValue,
@@ -17,6 +18,7 @@ import {
   normalizeSpaces,
   personNameValidator,
   safeTextValidator,
+  selectedIdValidator,
 } from '../../shared/validators/form-validators';
 import {
   MAX_CUSTOMER_NAME_LENGTH,
@@ -24,6 +26,15 @@ import {
   MIN_CUSTOMER_NAME_LENGTH,
   ORDER_MAX_DAYS_AHEAD,
 } from '../../shared/validators/validation.constants';
+
+interface OrderSuccessSummary {
+  pedidoId: number;
+  cliente: string;
+  producto: string;
+  cantidad: number;
+  total: number;
+  fechaEvento?: string | null;
+}
 
 @Component({
   selector: 'app-order-screen',
@@ -39,15 +50,17 @@ export class OrderScreen implements OnInit {
 
   productos: Producto[] = [];
   loadingProductos = false;
+  loadError = false;
   sending = false;
   submitted = false;
   successMessage = '';
   errorMessage = '';
+  orderSuccess?: OrderSuccessSummary;
   private stockSeleccionado?: number;
   readonly minEventDate = localDateInputValue();
-  readonly maxEventDate = localDateInputValue(
-    new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate() + ORDER_MAX_DAYS_AHEAD),
-  );
+  readonly maxEventDate = localDateInputValue(addLocalDays(ORDER_MAX_DAYS_AHEAD));
+  readonly maxCustomerNameLength = MAX_CUSTOMER_NAME_LENGTH;
+  readonly mexicanPhoneLength = MEXICAN_PHONE_LENGTH;
 
   form = this.fb.group({
     nombre_cliente: [
@@ -61,7 +74,14 @@ export class OrderScreen implements OnInit {
     ],
     telefono_cliente: ['', [Validators.required, mexicanPhoneValidator()]],
     correo_cliente: ['', [Validators.email]],
-    producto_id: [0, [Validators.required, Validators.min(1)]],
+    producto_id: [
+      0,
+      [
+        Validators.required,
+        Validators.min(1),
+        selectedIdValidator(() => this.productos.map((producto) => producto.id)),
+      ],
+    ],
     cantidad: [
       1,
       [
@@ -105,37 +125,54 @@ export class OrderScreen implements OnInit {
 
   cargarProductos(): void {
     this.loadingProductos = true;
+    this.loadError = false;
     this.errorMessage = '';
 
     this.productoService.getProductos().subscribe({
       next: (productos) => {
         this.productos = productos;
         this.actualizarStockSeleccionado();
+        this.form.controls.producto_id.updateValueAndValidity();
         this.form.controls.cantidad.updateValueAndValidity();
         this.loadingProductos = false;
       },
       error: () => {
         this.errorMessage =
           'No se pudo conectar con el servidor. Verifica que FastAPI este corriendo en http://localhost:8000.';
+        this.loadError = true;
         this.loadingProductos = false;
       },
     });
   }
 
   enviarPedido(): void {
+    if (this.sending) {
+      return;
+    }
+
     this.submitted = true;
     this.successMessage = '';
     this.errorMessage = '';
+    this.loadError = false;
 
-    if (this.form.invalid) {
+    if (this.loadingProductos || this.form.invalid) {
       this.markFormAsTouched();
       return;
     }
 
     const payload = this.buildPayload();
+    const producto = this.productoSeleccionado;
     this.sending = true;
     this.pedidoService.createPedido(payload).subscribe({
       next: (pedido) => {
+        this.orderSuccess = {
+          pedidoId: pedido.id,
+          cliente: payload.nombre_cliente,
+          producto: producto?.nombre ?? 'Producto seleccionado',
+          cantidad: payload.cantidad,
+          total: pedido.total_estimado,
+          fechaEvento: payload.fecha_evento,
+        };
         this.successMessage = `Pedido #${pedido.id} creado correctamente. Total estimado: ${pedido.total_estimado.toLocaleString('es-MX', {
           style: 'currency',
           currency: 'MXN',
@@ -157,6 +194,13 @@ export class OrderScreen implements OnInit {
         this.sending = false;
       },
     });
+  }
+
+  crearOtroPedido(): void {
+    this.orderSuccess = undefined;
+    this.successMessage = '';
+    this.errorMessage = '';
+    this.submitted = false;
   }
 
   isInvalid(controlName: string): boolean {
@@ -184,6 +228,14 @@ export class OrderScreen implements OnInit {
     }
 
     if (control.hasError('personName')) {
+      return 'Usa solo letras, acentos, \u00F1 y espacios. No uses numeros ni simbolos.';
+    }
+
+    if (control.hasError('mexicanPhone')) {
+      return `Ingresa un telefono mexicano de ${this.mexicanPhoneLength} digitos. Puedes separar con espacios.`;
+    }
+
+    if (control.hasError('personName')) {
       return 'Usa solo letras, acentos, ñ y espacios. No uses numeros ni simbolos.';
     }
 
@@ -201,6 +253,10 @@ export class OrderScreen implements OnInit {
 
     if (control.hasError('min')) {
       return 'El valor debe ser mayor o igual a 1.';
+    }
+
+    if (control.hasError('selectedId')) {
+      return 'Selecciona un producto disponible del catalogo.';
     }
 
     if (control.hasError('integer')) {
